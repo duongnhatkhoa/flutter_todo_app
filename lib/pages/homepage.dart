@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/util/dialog_box.dart';
 import '../util/todo_tile.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,6 +9,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Text controller
+  final _controller = TextEditingController();
+  //methods
+
   //List
   List toDoList = [
     ['Do some', false],
@@ -19,10 +24,28 @@ class _HomePageState extends State<HomePage> {
       toDoList[index][1] = !toDoList[index][1];
     });
   }
+  // save a new task
+  void saveNewTask(){
+    setState(() {
+      toDoList.add([_controller.text, false]);
+    });
+    Navigator.of(context).pop();
+    _controller.text = "";
+  }
+
+  // create a new task
   void createNewTask(){
     showDialog(context: context, builder: (context) {
-      return AlertDialog();
+      return DialogBox(
+        controller: _controller,
+        onSave: saveNewTask,
+        onCancel: () => Navigator.of(context).pop(),
+      );
     });
+  }
+
+  void deleteTask(){
+
   }
   @override
   Widget build(BuildContext context) {
@@ -38,7 +61,8 @@ class _HomePageState extends State<HomePage> {
           TodoTile(
           taskName: toDoList[index][0],
           taskCompleted: toDoList[index][1],
-          onChanged: (value) => checkBoxChanged(value, index))
+          onChanged: (value) => checkBoxChanged(value, index),
+          deleteFunction: deleteTask),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: createNewTask,
